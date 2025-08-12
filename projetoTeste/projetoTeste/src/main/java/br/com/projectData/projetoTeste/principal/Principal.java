@@ -8,10 +8,9 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -26,10 +25,15 @@ public class Principal {
         ListarFuncionarios();
         atualizarSalario();
         listarPorFuncao();
+        aniversariantes();
+        maisVelhos();
+        listarOrdemAlf();
+        totalSalarios();
     }
 
 
     public void insertFuncionarios(){
+
         DadosPessoa maria=new DadosPessoa("Maria", LocalDate.of(2000,10,18));
         DadosFuncionario f1=new DadosFuncionario(maria,new BigDecimal(2009.44),"Operador");
 
@@ -67,9 +71,9 @@ public class Principal {
         funcionarios.add(new Funcionario(f5));
         funcionarios.add(new Funcionario(f6));
         funcionarios.add(new Funcionario(f7));
+        funcionarios.add(new Funcionario(f8));
         funcionarios.add(new Funcionario(f9));
-        funcionarios.add(new Funcionario(f1));
-        funcionarios.add(new Funcionario(f1));
+        funcionarios.add(new Funcionario(f10));
 
 
     }
@@ -112,6 +116,7 @@ public class Principal {
     }
 
     public void listarPorFuncao(){
+        System.out.println("Lista por função:");
         Map<String, List<Funcionario>> funcionariosPorFuncao = funcionarios.stream()
                 .collect(Collectors.groupingBy(funcionario -> funcionario.getFuncao()));
 
@@ -120,6 +125,75 @@ public class Principal {
             lista.forEach(f -> System.out.println("  - " + f.getNome()));
         });
 
+        System.out.println("-----------------");
 
+
+    }
+
+    public void aniversariantes(){
+        System.out.println("Aniversariantes de Outubro e Dezembro");
+        funcionarios.stream().filter(funcionario -> {int mes=funcionario.getData_nascimento().getMonthValue();
+        return mes==10||mes==12;
+        }).forEach(funcionario -> {
+            System.out.println(funcionario.getNome());
+        });
+
+        System.out.println("-----------");
+    }
+
+    public void maisVelhos(){
+
+        System.out.println("Mais velho:");
+        Optional<Funcionario> funcionarioMaisVelho = funcionarios.stream()
+                .max((f1, f2) -> {
+                    LocalDate nascimento1 = f1.getData_nascimento();
+                    LocalDate nascimento2 = f2.getData_nascimento();
+                    // Quanto mais antigo, maior a idade
+                    return nascimento2.compareTo(nascimento1);
+                });
+
+        funcionarioMaisVelho.ifPresent(f -> {
+            String nome = f.getNome();
+            LocalDate nascimento = f.getData_nascimento();
+            int idade = Period.between(nascimento, LocalDate.now()).getYears();
+
+            System.out.println("Nome: " + nome);
+            System.out.println("Idade: " + idade);
+        });
+    }
+
+    public void listarOrdemAlf(){
+
+        System.out.println("---Ordem alfabetica------");
+        List<Funcionario> ordemAlfFunc=funcionarios.stream().sorted(Comparator.comparing(funcionario -> funcionario.getNome())).collect(Collectors.toList());
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+        symbols.setGroupingSeparator('.');
+        symbols.setDecimalSeparator(',');
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00", symbols);
+        for (Funcionario f : ordemAlfFunc) {
+            // Pegando os dados da pessoa dentro do funcionário
+            String nome = f.getNome();
+            String dataFormatada = f.getData_nascimento().format(dateFormatter);
+            String salarioFormatado = decimalFormat.format(f.getSalario());
+            String cargo = f.getFuncao();
+
+            System.out.println("--------------------------");
+            System.out.println("Nome: " + nome);
+            System.out.println("Data de Nascimento: " + dataFormatada);
+            System.out.println("Salário: R$ " + salarioFormatado);
+            System.out.println("Cargo: " + cargo);
+            System.out.println("--------------------------");
+        }
+    }
+
+    public void totalSalarios(){
+        BigDecimal somaSalario=funcionarios.stream().map(f->f.getSalario()).reduce(BigDecimal.ZERO,BigDecimal::add);
+        System.out.println("Soma dos salarios: R$"+somaSalario);
+    }
+
+    public void salariosMinimos(){
+        //não consegui fazer essa parte
     }
 }
