@@ -1,7 +1,6 @@
 package br.com.projectData.projetoTeste;
 
 import br.com.projectData.projetoTeste.principal.Principal;
-import br.com.projectData.projetoTeste.repository.FuncionarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,11 +13,9 @@ public class ProjetoTesteApplication implements CommandLineRunner {
 		SpringApplication.run(ProjetoTesteApplication.class, args);
 	}
 
-	@Autowired
-	private FuncionarioRepository repository;
 
 	@Override
 	public void run(String... args){
-		Principal principal=new Principal(repository);
+		Principal principal=new Principal();
 	}
 }

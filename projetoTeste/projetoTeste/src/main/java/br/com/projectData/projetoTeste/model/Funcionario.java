@@ -1,12 +1,9 @@
 package br.com.projectData.projetoTeste.model;
 
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
-@Entity
-@Table(name = "funcionario")
+
 public class Funcionario extends Pessoa{
 
 

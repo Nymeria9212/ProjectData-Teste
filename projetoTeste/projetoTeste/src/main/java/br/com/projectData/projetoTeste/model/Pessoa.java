@@ -1,16 +1,11 @@
 package br.com.projectData.projetoTeste.model;
 
-import jakarta.persistence.*;
+
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "pessoa")
-@Inheritance(strategy = InheritanceType.JOINED)
+
 public class Pessoa {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     private String nome;
     private LocalDate data_nascimento;
@@ -31,13 +26,6 @@ public class Pessoa {
         this.nome = nome;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public LocalDate getData_nascimento() {
         return data_nascimento;

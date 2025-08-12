@@ -3,7 +3,6 @@ package br.com.projectData.projetoTeste.principal;
 import br.com.projectData.projetoTeste.model.DadosFuncionario;
 import br.com.projectData.projetoTeste.model.DadosPessoa;
 import br.com.projectData.projetoTeste.model.Funcionario;
-import br.com.projectData.projetoTeste.repository.FuncionarioRepository;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -12,17 +11,21 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Principal {
 
-    private FuncionarioRepository repository;
+
     private List<Funcionario> funcionarios=new ArrayList<>();
 
-    public Principal(FuncionarioRepository repository) {
-        this.repository = repository;
+    public Principal() {
+
         insertFuncionarios();
         RemoverJoao();
         ListarFuncionarios();
+        atualizarSalario();
+        listarPorFuncao();
     }
 
 
@@ -57,29 +60,28 @@ public class Principal {
         DadosPessoa helena=new DadosPessoa("Helena",LocalDate.of(1996,9,2));
         DadosFuncionario f10=new DadosFuncionario(helena,new BigDecimal(2799.93),"Gerente");
 
-        Funcionario func1=new Funcionario(f1);
-        Funcionario func2=new Funcionario(f2);
-        Funcionario func3=new Funcionario(f3);
-        Funcionario func4=new Funcionario(f4);
-        Funcionario func5=new Funcionario(f5);
-        Funcionario func6=new Funcionario(f6);
-        Funcionario func7=new Funcionario(f7);
-        Funcionario func8=new Funcionario(f8);
-        Funcionario func9=new Funcionario(f9);
-        Funcionario func10=new Funcionario(f10);
-
-        repository.saveAll(List.of(func1,func2,func3,func4,func5,func6,func7,func8,func9,func10));
+        funcionarios.add(new Funcionario(f1));
+        funcionarios.add(new Funcionario(f2));
+        funcionarios.add(new Funcionario(f3));
+        funcionarios.add(new Funcionario(f4));
+        funcionarios.add(new Funcionario(f5));
+        funcionarios.add(new Funcionario(f6));
+        funcionarios.add(new Funcionario(f7));
+        funcionarios.add(new Funcionario(f9));
+        funcionarios.add(new Funcionario(f1));
+        funcionarios.add(new Funcionario(f1));
 
 
     }
 
 
     public void RemoverJoao(){
-            repository.deleteByName("João");
+        funcionarios.removeIf(f -> f.getNome().equalsIgnoreCase("João"));
+
     }
 
     public void ListarFuncionarios(){
-        List<Funcionario> funcionarios = repository.findAll();
+
 
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
@@ -101,5 +103,23 @@ public class Principal {
             System.out.println("Cargo: " + cargo);
             System.out.println("--------------------------");
         }
+    }
+
+    public void atualizarSalario(){
+        funcionarios.forEach(funcionario ->
+                funcionario.setSalario(funcionario.getSalario().add(funcionario.getSalario().multiply(new BigDecimal("0.1"))))
+        );
+    }
+
+    public void listarPorFuncao(){
+        Map<String, List<Funcionario>> funcionariosPorFuncao = funcionarios.stream()
+                .collect(Collectors.groupingBy(funcionario -> funcionario.getFuncao()));
+
+        funcionariosPorFuncao.forEach((funcao, lista) -> {
+            System.out.println("Função: " + funcao);
+            lista.forEach(f -> System.out.println("  - " + f.getNome()));
+        });
+
+
     }
 }
